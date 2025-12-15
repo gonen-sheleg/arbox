@@ -1,8 +1,33 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+@layer base {
+    body {
+        @apply bg-gray-100 text-gray-900 font-sans antialiased;
+    }
+}
 
-@theme inline {
-    --font-sans: Instrument Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+@layer components {
+    /* Floor row styling */
+    .floor-row {
+        @apply flex items-center gap-6 py-2 border-b border-gray-200 last:border-b-0;
+    }
+
+    /* Elevator column */
+    .elevator-column {
+        @apply flex items-center justify-center;
+    }
+}
+
+@layer utilities {
+    /* Smooth transitions for elevator movement */
+    .elevator-transition {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Button hover effects */
+    .btn-call {
+        @apply transform hover:scale-105 active:scale-95;
+    }
 }
