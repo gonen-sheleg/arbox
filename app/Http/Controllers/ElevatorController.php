@@ -63,9 +63,12 @@ class ElevatorController extends Controller
 
             $elevator = $this->elevatorService->callElevator($floor);
 
+
             return response()->json([
                 'success' => true,
-                'message' => "Elevator number $elevator is moving to floor $floor",
+                'message' => $elevator === 0
+                    ? "Floor call for $floor is queued"
+                    : "Elevator number $elevator is moving to floor $floor",
                 'elevatorNumber' => $elevator,
             ]);
         } catch (\Exception $e) {

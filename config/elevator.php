@@ -56,13 +56,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Initial Positions
+    | Initial Position
     |--------------------------------------------------------------------------
     |
-    | Define initial floor positions for elevators.
+    | Define the initial floor where all elevators start.
     | If null, all elevators start at ground floor (0).
-    | Format: comma-separated list of floor numbers
-    | Example: "0,2,4,6,8" places elevators at different floors
+    | All elevators will begin at this floor number.
+    | Example: Setting to 5 places all elevators at the 5th floor
     |
     */
 

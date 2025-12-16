@@ -80,7 +80,7 @@ Modern reactive frontend stack for smooth real-time updates:
   - [Download for Linux](https://docs.docker.com/desktop/install/linux-install/)
 - **Git**
 
-> **Note**: No need to install PHP, Composer, Node.js, or Redis locally. Everything runs inside Docker containers via Laravel Sail.
+> **Note**: No need to install PHP, Composer or Redis locally. Everything runs inside Docker containers via Laravel Sail.
 
 ## Installation & Running
 
@@ -161,13 +161,13 @@ ELEVATOR_COUNT=5
 ELEVATOR_FLOORS=10
 
 # Speed in milliseconds per floor (default: 1000ms = 1 second per floor)
-ELEVATOR_SPEED=1000
+ELEVATOR_FLOOR_TRAVEL_MS=1000
 
 # Door wait time in milliseconds (default: 2000ms = 2 seconds)
 ELEVATOR_DOOR_WAIT=2000
 
-# Initial positions of elevators (default: all start at ground floor)
-# Format: comma-separated floor numbers, e.g., "0,2,4,6,8"
+# Initial floor where all elevators start (default: 0 = ground floor)
+# All elevators will start at this floor number
 ELEVATOR_INITIAL_POSITIONS=0
 ```
 
@@ -200,7 +200,7 @@ curl -X POST http://localhost/api/elevator/call \
 # Response (all elevators busy - queued):
 # {
 #   "success": true,
-#   "message": "Elevator number 0 is moving to floor 5",
+#   "message": "Floor call for 5 is queued",
 #   "elevatorNumber": 0
 # }
 ```
