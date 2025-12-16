@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useElevatorStore } from '../stores/elevatorStore';
 
 const props = defineProps({
@@ -22,12 +22,14 @@ const props = defineProps({
 
 const store = useElevatorStore();
 
-// Local state for button
-const localState = ref('idle'); // idle, waiting, arrived
+// Get button state from store
+const buttonState = computed(() => 
+    store.floorButtonStates.get(props.floor) || 'idle'
+);
 
 // Button text based on state
 const buttonText = computed(() => {
-    switch (localState.value) {
+    switch (buttonState.value) {
         case 'waiting':
             return 'Waiting...';
         case 'arrived':
@@ -39,7 +41,7 @@ const buttonText = computed(() => {
 
 // Button styling based on state
 const buttonClass = computed(() => {
-    switch (localState.value) {
+    switch (buttonState.value) {
         case 'waiting':
             return 'bg-yellow-500 text-white cursor-wait';
         case 'arrived':
@@ -51,52 +53,19 @@ const buttonClass = computed(() => {
 
 // Is button disabled
 const isDisabled = computed(() =>
-    localState.value === 'waiting' || localState.value === 'arrived'
+    buttonState.value === 'waiting' || buttonState.value === 'arrived'
 );
+
 
 // Call elevator function
 async function callElevator() {
     if (isDisabled.value) return;
 
     try {
-        localState.value = 'waiting';
-
-        // Call elevator through store (triggers simulation)
+        // Call elevator through store (store handles state updates)
         await store.callElevator(props.floor);
-
-        // Watch for elevator arrival at this floor
-        watchForArrival();
-
     } catch (error) {
         console.error('Error calling elevator:', error);
-        localState.value = 'idle';
     }
-}
-
-// Watch for elevator arrival at this floor
-function watchForArrival() {
-    const checkInterval = setInterval(() => {
-        const arrivedElevator = store.elevators.find(
-            elevator => elevator.currentFloor === props.floor && elevator.state === 'arrived'
-        );
-
-        if (arrivedElevator) {
-            localState.value = 'arrived';
-            clearInterval(checkInterval);
-
-            // Reset button after 3 seconds
-            setTimeout(() => {
-                localState.value = 'idle';
-            }, 3000);
-        }
-    }, 100); // Check every 100ms
-
-    // Timeout after 60 seconds
-    setTimeout(() => {
-        clearInterval(checkInterval);
-        if (localState.value === 'waiting') {
-            localState.value = 'idle';
-        }
-    }, 60000);
 }
 </script>

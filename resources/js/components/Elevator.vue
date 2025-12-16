@@ -19,7 +19,7 @@
 
         <!-- Timer on floor cell showing time until elevator arrives at destination -->
         <div
-            v-if="!isAnchorCell && showFloorTimer"
+            v-if="showFloorTimer"
             class="absolute inset-0 flex items-center justify-center pointer-events-none"
         >
             <div class="bg-blue-500 text-white text-xs font-bold rounded px-6 py-1 whitespace-nowrap">
@@ -32,7 +32,18 @@
 <script setup>
 import { computed, ref, watch, onUnmounted } from 'vue';
 
+/**
+ * @typedef {Object} Elevator
+ * @property {number} id - Elevator identifier
+ * @property {number} currentFloor - Current discrete floor number
+ * @property {number} visualPosition - Smooth visual position for animation (can be fractional)
+ * @property {string} state - Elevator state: 'idle', 'moving', or 'arrived'
+ * @property {number|null} targetFloor - Target floor when moving
+ * @property {number} timeRemaining - Seconds remaining until arrival
+ */
+
 const props = defineProps({
+    /** @type {import('vue').PropType<Elevator>} */
     elevator: {
         type: Object,
         required: true
@@ -44,10 +55,6 @@ const props = defineProps({
     totalFloors: {
         type: Number,
         required: true
-    },
-    speedPerFloor: {
-        type: Number,
-        default: 1000
     }
 });
 
@@ -87,43 +94,10 @@ const elevatorColorClass = computed(() => {
     }
 });
 
-// Calculate time to destination (in seconds)
-const timeToDestination = computed(() => {
-    if (props.elevator.state !== 'moving' || !props.elevator.destinationFloor) {
-        return 0;
-    }
-
-    const visualPos = props.elevator.visualPosition ?? props.elevator.currentFloor;
-    const floorsRemaining = Math.abs(props.elevator.destinationFloor - visualPos);
-    const secondsRemaining = Math.ceil((floorsRemaining * props.speedPerFloor) / 1000);
-
-    return secondsRemaining;
-});
-
-// Calculate time until elevator reaches this specific floor
-const timeToThisFloor = computed(() => {
-    if (props.elevator.state !== 'moving' || !props.elevator.destinationFloor) {
-        return 0;
-    }
-
-    const visualPos = props.elevator.visualPosition ?? props.elevator.currentFloor;
-    const destination = props.elevator.destinationFloor;
-    const thisFloor = props.currentFloor;
-
-    // Only show timer on destination floor
-    if (thisFloor !== destination) {
-        return 0;
-    }
-
-    const floorsToThisFloor = Math.abs(thisFloor - visualPos);
-    const secondsToThisFloor = Math.ceil((floorsToThisFloor * props.speedPerFloor) / 1000);
-
-    return secondsToThisFloor;
-});
 
 // Format time as "X min Y sec" or "Y sec"
 const formattedTimeToFloor = computed(() => {
-    const totalSeconds = timeToThisFloor.value;
+    const totalSeconds = props.elevator.timeRemaining || 0;
 
     if (totalSeconds === 0) {
         return '';
@@ -141,22 +115,22 @@ const formattedTimeToFloor = computed(() => {
 
 // Show floor timer only on destination floor and elevator hasn't reached it yet
 const showFloorTimer = computed(() => {
-    if (props.elevator.state !== 'moving' || !props.elevator.destinationFloor) {
+    if (props.elevator.state !== 'moving') {
         return false;
     }
 
-    const visualPos = props.elevator.visualPosition ?? props.elevator.currentFloor;
-    const destination = props.elevator.destinationFloor;
-    const thisFloor = props.currentFloor;
+    const visualPos = props.elevator.visualPosition;
+    const targetFloor = props.elevator.targetFloor;
+    const currentFloor = props.currentFloor;
 
     // Only show on destination floor
-    if (thisFloor !== destination) {
+    if (currentFloor !== targetFloor) {
         return false;
     }
 
     // Hide timer when elevator reaches this floor (within 0.1 floors)
-    const hasReachedFloor = Math.abs(visualPos - thisFloor) < 0.1;
+    const hasReachedFloor = Math.abs(visualPos - currentFloor) < 0.1;
 
-    return !hasReachedFloor && timeToThisFloor.value > 0;
+    return !hasReachedFloor && props.elevator.timeRemaining > 0;
 });
 </script>

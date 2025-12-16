@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ElevatorController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,13 +18,4 @@ Route::get('/', function () {
     return redirect('/elevators');
 });
 
-Route::get('/elevators', function () {
-    $config = [
-        'elevatorCount' => config('elevator.count'),
-        'floors' => config('elevator.floors'),
-        'speedPerFloor' => config('elevator.speed_per_floor'),
-        'doorWaitTime' => config('elevator.door_wait_time'),
-    ];
-
-    return view('elevators', compact('config'));
-})->name('elevators');
+Route::get('/elevators', [ElevatorController::class, 'index'])->name('elevators');

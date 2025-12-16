@@ -25,13 +25,12 @@
                     <div
                         v-for="elevator in elevators"
                         :key="elevator.id"
-                        class="flex items-center justify-center px-10 py-4 border-r border-gray-300"
+                        class="flex items-center justify-center px-8 py-4 border-r border-gray-300"
                     >
                         <Elevator
                             :elevator="elevator"
                             :current-floor="floor"
-                            :total-floors="config.totalFloors"
-                            :speed-per-floor="config.speedPerFloor"
+                            :total-floors="store.config.totalFloors"
                         />
                     </div>
                 </div>
@@ -40,6 +39,25 @@
                 <div class="w-24 pl-4">
                     <FloorButton :floor="floor" />
                 </div>
+            </div>
+
+            <!-- Reset Button -->
+            <div class="flex items-center mt-10">
+                <!-- Left spacer to align with floor labels -->
+                <div class="w-32"></div>
+
+                <!-- Center button in elevator grid area -->
+                <div class="flex justify-center flex-1">
+                    <button
+                        @click="handleReset"
+                        class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg shadow-md transition-colors duration-200"
+                    >
+                        Reset All Elevators
+                    </button>
+                </div>
+
+                <!-- Right spacer to align with call buttons -->
+                <div class="w-24"></div>
             </div>
         </main>
     </div>
@@ -54,19 +72,11 @@ import FloorButton from './FloorButton.vue';
 // Get store
 const store = useElevatorStore();
 
-// Get elevator config from window
-const rawConfig = window.elevatorConfig || {};
-const config = {
-    totalFloors: rawConfig.totalFloors ?? rawConfig.floors ?? 10,
-    totalElevators: rawConfig.totalElevators ?? rawConfig.elevatorCount ?? 5,
-    speedPerFloor: rawConfig.speedPerFloor ?? 1000,
-};
-
 // Computed properties
 const elevators = computed(() => store.elevators);
 const floorNumbers = computed(() => {
     const floors = [];
-    for (let i = 0; i <= config.totalFloors; i++) {
+    for (let i = 0; i < store.config.totalFloors; i++) {
         floors.push(i);
     }
     return floors;
@@ -88,12 +98,16 @@ function getFloorLabel(floor) {
 
 // Initialize on mount
 onMounted(() => {
-    store.initialize(config);
-    store.connectToWebSocket();
+    store.initialize();
 });
 
-// Cleanup on unmount
-onUnmounted(() => {
-    store.disconnect();
-});
+// Reset handler
+async function handleReset() {
+    try {
+        await store.resetSystem();
+    } catch (error) {
+        console.error('Failed to reset elevator system:', error);
+    }
+}
+
 </script>
