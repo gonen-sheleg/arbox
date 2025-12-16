@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'speed_per_floor' => env('ELEVATOR_SPEED', 1000),
+    'speed_per_floor' => env('ELEVATOR_FLOOR_TRAVEL_MS', 1000),
 
     /*
     |--------------------------------------------------------------------------
