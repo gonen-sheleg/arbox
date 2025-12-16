@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Services\ElevatorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class ElevatorController extends Controller
@@ -26,7 +24,7 @@ class ElevatorController extends Controller
         $elevators = $this->elevatorService->getElevators();
         $this->elevatorService->releaseAllElevators($elevators);
         $serviceConfig = $this->elevatorService->getConfig();
-
+        $serviceConfig = $this->elevatorService->getConfig();
 
         $config = [
             'elevators' => $elevators,
@@ -136,4 +134,5 @@ class ElevatorController extends Controller
             ], 500);
         }
     }
+
 }

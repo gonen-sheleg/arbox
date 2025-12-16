@@ -16,10 +16,9 @@
                 class="flex items-center"
             >
                 <!-- Floor Label (left side - outside grid) -->
-                <div class="w-32 text-right font-medium text-gray-700 pr-4">
+                <div class="min-w-[150px] whitespace-nowrap text-right font-medium text-gray-700 pr-8">
                     {{ getFloorLabel(floor) }}
                 </div>
-
                 <!-- Elevators Grid (middle - white background with grid lines) -->
                 <div class="flex bg-white border-y border-l border-gray-300">
                     <div
@@ -54,6 +53,10 @@
                     >
                         Reset All Elevators
                     </button>
+                </div>
+
+                <div>
+
                 </div>
 
                 <!-- Right spacer to align with call buttons -->

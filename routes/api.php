@@ -23,4 +23,5 @@ Route::prefix('elevator')->group(function () {
 
     // Reset system to initial state (useful for testing)
     Route::post('/reset', [ElevatorController::class, 'reset']);
+
 });

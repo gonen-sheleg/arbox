@@ -2,7 +2,6 @@
 
 namespace App\Services;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class ElevatorService
 {
@@ -33,8 +32,19 @@ class ElevatorService
 
         if (!$elevators) {
             $elevators = $this->initializeState();
-            $this->setElevators($elevators);
+        } elseif (count($elevators) > $this->config['count']) {
+            $elevators = array_slice($elevators, 0, $this->config['count']);
+        } elseif (count($elevators) < $this->config['count']) {
+            $neededCount = $this->config['count'] - count($elevators);
+            $newElevators = array_slice($this->initializeState(), 0, $neededCount);
+            $elevators = array_merge($elevators, $newElevators);
         }
+
+        $elevators = collect($elevators)
+            ->map(fn($elevator,$index) => [...$elevator,'id' => $index + 1])
+            ->toArray();
+
+        $this->setElevators($elevators);
 
         return $elevators;
     }
@@ -81,11 +91,6 @@ class ElevatorService
         $elevators = $this->getElevators();
 
         $freeElevators = collect($elevators)->where('state', 'idle')->count();
-
-        Log::info('-------------------------------------');
-        Log::info(json_encode($elevators));
-        Log::info(json_encode($freeElevators));
-        Log::info('-------------------------------------');
 
         if(empty($freeElevators)){
             $this->addQueueCall($floor);
