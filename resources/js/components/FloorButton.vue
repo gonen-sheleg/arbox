@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { useElevatorStore } from '../stores/elevatorStore';
 
 const props = defineProps({
@@ -26,6 +26,17 @@ const store = useElevatorStore();
 const buttonState = computed(() => 
     store.floorButtonStates.get(props.floor) || 'idle'
 );
+
+// Audio for elevator arrival
+const elevatorBell = new Audio('/elevator-bell.wav');
+
+// Watch for button state changes and play sound when arrived
+watch(buttonState, (newState) => {
+    if (newState === 'arrived') {
+        elevatorBell.currentTime = 0;
+        elevatorBell.play().catch(err => console.error('Error playing sound:', err));
+    }
+});
 
 // Check if any elevator is at this floor
 const hasElevatorAtFloor = computed(() =>
