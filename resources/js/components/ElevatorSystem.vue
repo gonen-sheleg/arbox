@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-gray-100 py-8">
+    <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
         <!-- Header -->
         <header class="text-center mb-8">
             <h1 class="text-3xl font-bold text-gray-800">
@@ -8,7 +8,7 @@
         </header>
 
         <!-- Main Container -->
-        <main class="max-w-6xl mx-auto">
+        <main class="max-w-6xl">
             <!-- Loop through floors (top to bottom) -->
             <div
                 v-for="floor in reversedFloorNumbers"

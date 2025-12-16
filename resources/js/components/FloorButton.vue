@@ -27,6 +27,13 @@ const buttonState = computed(() =>
     store.floorButtonStates.get(props.floor) || 'idle'
 );
 
+// Check if any elevator is at this floor
+const hasElevatorAtFloor = computed(() =>
+    store.elevators.some(elevator => 
+        elevator.currentFloor === props.floor && elevator.state === 'idle'
+    )
+);
+
 // Button text based on state
 const buttonText = computed(() => {
     switch (buttonState.value) {
@@ -53,7 +60,7 @@ const buttonClass = computed(() => {
 
 // Is button disabled
 const isDisabled = computed(() =>
-    buttonState.value === 'waiting' || buttonState.value === 'arrived'
+    buttonState.value === 'waiting' || buttonState.value === 'arrived' || hasElevatorAtFloor.value
 );
 
 
