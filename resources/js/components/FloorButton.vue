@@ -23,7 +23,7 @@ const props = defineProps({
 const store = useElevatorStore();
 
 // Get button state from store
-const buttonState = computed(() => 
+const buttonState = computed(() =>
     store.floorButtonStates.get(props.floor) || 'idle'
 );
 
@@ -40,7 +40,7 @@ watch(buttonState, (newState) => {
 
 // Check if any elevator is at this floor
 const hasElevatorAtFloor = computed(() =>
-    store.elevators.some(elevator => 
+    store.elevators.some(elevator =>
         elevator.currentFloor === props.floor && elevator.state === 'idle'
     )
 );
@@ -49,9 +49,9 @@ const hasElevatorAtFloor = computed(() =>
 const buttonText = computed(() => {
     switch (buttonState.value) {
         case 'waiting':
-            return 'Waiting...';
+            return 'Waiting';
         case 'arrived':
-            return 'Arrived!';
+            return 'Arrived';
         default:
             return 'Call';
     }
@@ -61,9 +61,9 @@ const buttonText = computed(() => {
 const buttonClass = computed(() => {
     switch (buttonState.value) {
         case 'waiting':
-            return 'bg-yellow-500 text-white cursor-wait';
+            return 'bg-red-500 text-white cursor-wait';
         case 'arrived':
-            return 'bg-blue-500 text-white';
+            return 'text-green-500 border border-green-500';
         default:
             return 'bg-green-500 hover:bg-green-600 text-white cursor-pointer';
     }

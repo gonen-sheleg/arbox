@@ -14,6 +14,7 @@
                     'w-10 h-10 transition-transform duration-200',
                     elevator.state === 'moving' ? 'scale-110' : 'scale-100'
                 ]"
+                :style="elevatorFilterStyle"
             />
         </div>
 
@@ -22,7 +23,7 @@
             v-if="showFloorTimer"
             class="absolute inset-0 flex items-center justify-center pointer-events-none"
         >
-            <div class="bg-blue-500 text-white text-xs font-bold rounded px-6 py-1 whitespace-nowrap">
+            <div class=" text-black text-xs font-bold rounded px-6 py-1 whitespace-nowrap">
                 {{ formattedTimeToFloor }}
             </div>
         </div>
@@ -83,14 +84,24 @@ const elevatorPositionStyle = computed(() => {
 // Elevator color based on state
 const elevatorColorClass = computed(() => {
     switch (props.elevator.state) {
-        case 'idle':
-            return 'text-gray-700';
         case 'moving':
-            return 'text-yellow-500';
+            return 'text-red-500';
         case 'arrived':
             return 'text-green-500';
         default:
-            return 'text-gray-700';
+            return 'text-black';
+    }
+});
+
+// CSS filter to colorize the elevator SVG
+const elevatorFilterStyle = computed(() => {
+    switch (props.elevator.state) {
+        case 'moving':
+            return { filter: 'brightness(0) saturate(100%) invert(27%) sepia(98%) saturate(6832%) hue-rotate(356deg) brightness(104%) contrast(93%)' };
+        case 'arrived':
+            return { filter: 'brightness(0) saturate(100%) invert(64%) sepia(58%) saturate(426%) hue-rotate(82deg) brightness(95%) contrast(93%)' };
+        default:
+            return { filter: 'brightness(0) saturate(100%)' };
     }
 });
 
